@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AiCAM | المساعد الذكي للأمان والمراقبة</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  
+  <!-- Fonts: Cairo for Arabic & Plus Jakarta Sans for Latin -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              orange: '#ff773b',
+              orangeHover: '#f26526',
+              orangeLight: 'rgba(255, 119, 59, 0.12)',
+              charcoal: '#2f2f2f',
+              darkBg: '#181818',
+              cardDark: '#232323',
+              borderDark: '#383838'
+            }
+          },
+          fontFamily: {
+            sans: ['Cairo', 'Plus Jakarta Sans', 'sans-serif'],
+            mono: ['Consolas', 'Courier New', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Marked for Markdown, DOMPurify for security, Highlight.js for code -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-[#141414] text-gray-100 min-h-screen flex flex-col font-sans transition-colors duration-200">
+
+  <!-- Main App Container -->
+  <div class="flex flex-col h-screen overflow-hidden">
+    
+    <!-- Top Navigation Header -->
+    <header class="h-16 border-b border-[#2e2e2e] bg-[#1c1c1c]/90 backdrop-blur-md px-4 sm:px-6 flex items-center justify-between z-30 shrink-0">
+      
+      <!-- Brand Logo & Live Badge -->
+      <div class="flex items-center gap-3 sm:gap-4">
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-2 group">
+          <div class="w-9 h-9 rounded-lg bg-brand-orange/15 border border-brand-orange/30 flex items-center justify-center p-1.5 shadow-sm group-hover:scale-105 transition-transform">
+            <img src="assets/icon.svg" alt="AiCAM Icon" class="w-full h-full object-contain" />
+          </div>
+          <div class="flex flex-col">
+            <div class="flex items-center gap-1.5 leading-none">
+              <span class="text-xl font-black tracking-wider text-white">Ai<span class="text-brand-orange">CAM</span></span>
+              <span class="hidden md:inline-block text-[10px] font-bold px-1.5 py-0.5 rounded bg-brand-orange text-white uppercase tracking-wider">AI ASSISTANT</span>
+            </div>
+            <span class="text-[10px] text-gray-400 font-medium tracking-wide">Smart Intelligent Security</span>
+          </div>
+        </a>
+
+        <!-- Status Pill -->
+        <div class="hidden sm:flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+          </span>
+          <span id="statusText">جاهز ومتصل</span>
+        </div>
+      </div>
+
+      <!-- Header Action Controls -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        
+        <!-- Active Model Selector Dropdown in Header -->
+        <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#252525] hover:bg-[#2b2b2b] border border-[#383838] text-xs text-gray-300 transition-all shadow-sm">
+          <i class="fa-solid fa-microchip text-brand-orange text-xs"></i>
+          <span class="text-gray-400 hidden md:inline">النموذج:</span>
+          <select id="headerModelSelect" class="bg-transparent text-white font-medium text-xs font-mono focus:outline-none cursor-pointer pr-1">
+            <option value="openai/gpt-oss-120b" class="bg-[#1c1c1c] text-white">GPT OSS 120B (الأقوى والأعلى سعة ⚡)</option>
+            <option value="allam-2-7b" class="bg-[#1c1c1c] text-white">ALLaM 2 7B (النموذج العربي فائق السرعة 🚀)</option>
+            <option value="qwen/qwen3.8-27b" class="bg-[#1c1c1c] text-white">Qwen 3.8 27B (متعدد اللغات)</option>
+            <option value="openai/gpt-oss-20b" class="bg-[#1c1c1c] text-white">GPT OSS 20B (خفيف واقتصادي)</option>
+          </select>
+        </div>
+
+        <!-- Knowledge Base & Training Data Button -->
+        <button id="openKnowledgeBtn" class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-orange/15 hover:bg-brand-orange/25 border border-brand-orange/40 text-brand-orange text-xs sm:text-sm font-semibold transition-all shadow-sm" title="إدارة بيانات التدريب والمعرفة">
+          <i class="fa-solid fa-brain"></i>
+          <span class="hidden sm:inline">بيانات التدريب والمعرفة</span>
+          <span class="relative flex h-2 w-2">
+            <span class="animate-pulse absolute inline-flex h-full w-full rounded-full bg-brand-orange opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-orange"></span>
+          </span>
+        </button>
+
+        <!-- New Chat Button -->
+        <button id="newChatBtn" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#272727] hover:bg-[#323232] border border-[#383838] text-gray-300 hover:text-white text-xs sm:text-sm font-medium transition-all" title="محادثة جديدة">
+          <i class="fa-solid fa-plus text-xs"></i>
+          <span class="hidden md:inline">محادثة جديدة</span>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="w-9 h-9 rounded-lg bg-[#272727] hover:bg-[#323232] border border-[#383838] text-gray-300 hover:text-white flex items-center justify-center transition-all" title="تبديل المظهر">
+          <i class="fa-solid fa-sun text-sm" id="themeIcon"></i>
+        </button>
+
+        <!-- Brand Guide / Info Button -->
+        <button id="brandInfoBtn" class="w-9 h-9 rounded-lg bg-[#272727] hover:bg-[#323232] border border-[#383838] text-gray-300 hover:text-white flex items-center justify-center transition-all" title="معلومات الهوية والشركة">
+          <i class="fa-solid fa-circle-info text-sm"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <main class="flex-1 flex flex-col overflow-hidden relative">
+      
+      <!-- Messages Chat Flow Container -->
+      <div id="chatMessages" class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 scroll-smooth">
+        
+        <!-- Welcome Hero View (Shown on Empty Chat) -->
+        <div id="welcomeView" class="max-w-3xl mx-auto py-8 sm:py-12 flex flex-col items-center text-center">
+          
+          <!-- Animated Brand Badge -->
+          <div class="relative mb-6">
+            <div class="absolute -inset-4 bg-brand-orange/20 rounded-full blur-2xl opacity-60"></div>
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-b from-[#2a2a2a] to-[#1e1e1e] border-2 border-brand-orange/40 flex items-center justify-center p-4 shadow-xl shadow-brand-orange/10">
+              <img src="assets/icon.svg" alt="AiCAM Logo" class="w-full h-full object-contain filter drop-shadow" />
+            </div>
+          </div>
+
+          <!-- Welcome Headers -->
+          <h1 class="text-2xl sm:text-4xl font-extrabold text-white mb-3">
+            مرحباً بك في المساعد الذكي لـ <span class="text-brand-orange">AiCAM</span>
+          </h1>
+          <p class="text-sm sm:text-base text-gray-400 max-w-xl leading-relaxed mb-8">
+            النظام الذكي المتكامل للإجابة على جميع الاستفسارات الخاصة بأنظمة المراقبة الذكية، كاميرات الأمان، إنذارات كشف التسلل، والحلول الأمنية المتقدمة.
+          </p>
+
+          <!-- Quick Suggestion Cards -->
+          <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 text-right">
+            
+            <button class="suggestion-card group p-4 rounded-xl bg-[#202020] hover:bg-[#282828] border border-[#333333] hover:border-brand-orange/50 transition-all duration-200 flex flex-col gap-1.5 shadow-sm text-right" data-prompt="ما هي أفضل حلول وأنظمة كاميرات المراقبة الذكية التي تقدمها AiCAM للمنازل والشركات؟">
+              <div class="flex items-center justify-between w-full">
+                <span class="text-xs font-bold text-brand-orange flex items-center gap-1.5">
+                  <i class="fa-solid fa-video"></i>
+                  كاميرات المراقبة الذكية
+                </span>
+                <i class="fa-solid fa-arrow-left text-xs text-gray-500 group-hover:text-brand-orange group-hover:-translate-x-1 transition-all"></i>
+              </div>
+              <p class="text-sm text-gray-300 font-medium">ما هي أفضل حلول كاميرات المراقبة للمنازل والشركات؟</p>
+            </button>
+
+            <button class="suggestion-card group p-4 rounded-xl bg-[#202020] hover:bg-[#282828] border border-[#333333] hover:border-brand-orange/50 transition-all duration-200 flex flex-col gap-1.5 shadow-sm text-right" data-prompt="كيف تعمل تقنية التعرف الذكي على الوجوه واكتشاف الحركة وتقليل الإنذارات الكاذبة؟">
+              <div class="flex items-center justify-between w-full">
+                <span class="text-xs font-bold text-brand-orange flex items-center gap-1.5">
+                  <i class="fa-solid fa-brain"></i>
+                  ذكاء اصطناعي وحماية
+                </span>
+                <i class="fa-solid fa-arrow-left text-xs text-gray-500 group-hover:text-brand-orange group-hover:-translate-x-1 transition-all"></i>
+              </div>
+              <p class="text-sm text-gray-300 font-medium">كيف تعمل تقنية التعرف على الوجوه واكتشاف الحركة؟</p>
+            </button>
+
+            <button class="suggestion-card group p-4 rounded-xl bg-[#202020] hover:bg-[#282828] border border-[#333333] hover:border-brand-orange/50 transition-all duration-200 flex flex-col gap-1.5 shadow-sm text-right" data-prompt="كيف يمكنني ربط نظام كاميرات AiCAM بتطبيق الهاتف المحمول والمراقبة السحابية على مدار الساعة؟">
+              <div class="flex items-center justify-between w-full">
+                <span class="text-xs font-bold text-brand-orange flex items-center gap-1.5">
+                  <i class="fa-solid fa-mobile-screen"></i>
+                  التطبيق والمراقبة السحابية
+                </span>
+                <i class="fa-solid fa-arrow-left text-xs text-gray-500 group-hover:text-brand-orange group-hover:-translate-x-1 transition-all"></i>
+              </div>
+              <p class="text-sm text-gray-300 font-medium">طريقة ربط الكاميرات بتطبيق الموبايل والمراقبة 24/7؟</p>
+            </button>
+
+            <button class="suggestion-card group p-4 rounded-xl bg-[#202020] hover:bg-[#282828] border border-[#333333] hover:border-brand-orange/50 transition-all duration-200 flex flex-col gap-1.5 shadow-sm text-right" data-prompt="ما هي الحلول الأمنية الموصى بها للمستودعات، المصانع، والمتاجر الكبيرة؟">
+              <div class="flex items-center justify-between w-full">
+                <span class="text-xs font-bold text-brand-orange flex items-center gap-1.5">
+                  <i class="fa-solid fa-building-shield"></i>
+                  حلول الشركات والمؤسسات
+                </span>
+                <i class="fa-solid fa-arrow-left text-xs text-gray-500 group-hover:text-brand-orange group-hover:-translate-x-1 transition-all"></i>
+              </div>
+              <p class="text-sm text-gray-300 font-medium">ما هي الحلول الأمنية الموصى بها للمستودعات والمتاجر الكبيرة؟</p>
+            </button>
+
+          </div>
+
+          <!-- Training Data Reminder Note -->
+          <div class="mt-8 px-4 py-3 rounded-xl bg-[#1e1e1e] border border-dashed border-[#444] text-xs text-gray-400 flex items-center gap-2 max-w-lg">
+            <i class="fa-solid fa-circle-check text-brand-orange text-base"></i>
+            <span>الـ API متصل ومفعل، وجاهز لاستقبال بيانات التدريب والمعلومات الإضافية الخاصة بشركتك في أي وقت.</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Floating Stop Generating Button (hidden by default) -->
+      <div id="stopGeneratingContainer" class="hidden absolute bottom-24 left-1/2 -translate-x-1/2 z-20">
+        <button id="stopGeneratingBtn" class="flex items-center gap-2 px-4 py-2 rounded-full bg-red-600/90 hover:bg-red-600 text-white text-xs font-bold shadow-lg shadow-red-600/20 backdrop-blur-md transition-all">
+          <i class="fa-solid fa-stop text-xs"></i>
+          <span>إيقاف التوليد</span>
+        </button>
+      </div>
+
+      <!-- Bottom Chat Input Area -->
+      <div class="shrink-0 p-4 sm:p-6 bg-gradient-to-t from-[#141414] via-[#141414] to-transparent">
+        <div class="max-w-4xl mx-auto">
+          
+          <!-- Input Box Capsule -->
+          <div class="relative bg-[#1e1e1e] border border-[#333333] focus-within:border-brand-orange rounded-2xl shadow-xl transition-all duration-200 flex flex-col p-2 sm:p-2.5">
+            
+            <!-- Textarea -->
+            <textarea
+              id="chatInput"
+              rows="1"
+              placeholder="اكتب سؤالك هنا عن منتجات أو خدمات AiCAM..."
+              class="w-full bg-transparent text-gray-100 placeholder-gray-500 text-sm sm:text-base px-3 py-2 focus:outline-none resize-none max-h-40 overflow-y-auto leading-relaxed"
+            ></textarea>
+
+            <!-- Bottom Tools Bar inside Input Capsule -->
+            <div class="flex items-center justify-between pt-1 px-1">
+              
+              <!-- Left Action Badges -->
+              <div class="flex items-center gap-1.5 sm:gap-2">
+                <!-- Voice Input Button (Speech to Text) -->
+                <button id="micBtn" class="p-2 rounded-lg text-gray-400 hover:text-brand-orange hover:bg-[#282828] transition-all text-sm" title="إدخال صوتي">
+                  <i class="fa-solid fa-microphone"></i>
+                </button>
+                
+                <!-- Quick Clear Input -->
+                <button id="clearInputBtn" class="hidden p-2 rounded-lg text-gray-400 hover:text-red-400 hover:bg-[#282828] transition-all text-sm" title="مسح النص">
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+                
+                <span class="text-[11px] text-gray-500 hidden sm:inline-block pr-1">
+                  AiCAM Smart Security Assistant
+                </span>
+              </div>
+
+              <!-- Right Buttons (Token/Char count + Send Button) -->
+              <div class="flex items-center gap-2">
+                <span id="charCount" class="text-[11px] text-gray-500 hidden sm:inline">0 حرف</span>
+                
+                <button
+                  id="sendBtn"
+                  disabled
+                  class="flex items-center justify-center w-10 h-10 rounded-xl bg-brand-orange hover:bg-brand-orangeHover disabled:opacity-40 disabled:hover:bg-brand-orange text-white shadow-md shadow-brand-orange/20 transition-all duration-150"
+                  title="إرسال (Enter)"
+                >
+                  <i class="fa-solid fa-arrow-up text-base transform -rotate-45" id="sendIcon"></i>
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Shortcuts & Footer Hint -->
+          <div class="flex items-center justify-between text-[11px] text-gray-500 px-3 pt-2">
+            <span>اضغط <kbd class="px-1.5 py-0.5 rounded bg-[#252525] border border-[#383838] font-mono text-[10px]">Enter</kbd> للإرسال • <kbd class="px-1.5 py-0.5 rounded bg-[#252525] border border-[#383838] font-mono text-[10px]">Shift+Enter</kbd> لسطر جديد</span>
+            <span class="text-brand-orange font-medium">AiCAM © 2026 • الذكاء الاصطناعي للأمان</span>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: KNOWLEDGE BASE & TRAINING DATA MANAGER           -->
+  <!-- ======================================================== -->
+  <div id="knowledgeModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    
+    <div class="bg-[#1c1c1c] border border-[#383838] rounded-2xl w-full max-w-4xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+      
+      <!-- Modal Header -->
+      <div class="p-4 sm:p-5 border-b border-[#2e2e2e] flex items-center justify-between bg-[#222222]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-orange/15 border border-brand-orange/30 flex items-center justify-center text-brand-orange text-lg">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div>
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+              إدارة بيانات التدريب وقاعدة المعرفة
+              <span class="text-xs px-2 py-0.5 rounded-full bg-brand-orange text-white font-semibold">AiCAM</span>
+            </h2>
+            <p class="text-xs text-gray-400">يمكنك هنا إضافة وتحديث بيانات منتجات وخدمات الشركة التي سيعتمد عليها الشات بوت في الردود.</p>
+          </div>
+        </div>
+        
+        <button id="closeKnowledgeModalBtn" class="w-8 h-8 rounded-lg bg-[#2c2c2c] hover:bg-[#383838] text-gray-400 hover:text-white flex items-center justify-center transition-all">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Modal Tabs -->
+      <div class="flex border-b border-[#2e2e2e] bg-[#1a1a1a] px-4 pt-2 gap-2 overflow-x-auto">
+        <button class="kb-tab active px-4 py-2.5 text-xs sm:text-sm font-bold border-b-2 border-brand-orange text-brand-orange flex items-center gap-2 whitespace-nowrap" data-tab="tab-training">
+          <i class="fa-solid fa-database"></i>
+          <span>بيانات التدريب المخصصة (Custom Data)</span>
+        </button>
+        <button class="kb-tab px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center gap-2 whitespace-nowrap" data-tab="tab-overview">
+          <i class="fa-solid fa-building-shield"></i>
+          <span>هوية الشركة والخدمات الأساسية</span>
+        </button>
+        <button class="kb-tab px-4 py-2.5 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-gray-400 hover:text-gray-200 flex items-center gap-2 whitespace-nowrap" data-tab="tab-model">
+          <i class="fa-solid fa-sliders"></i>
+          <span>إعدادات النموذج والـ API</span>
+        </button>
+      </div>
+
+      <!-- Modal Body (Tab Contents) -->
+      <div class="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+        
+        <!-- Tab 1: Custom Training Data -->
+        <div id="tab-training" class="tab-pane space-y-4">
+          <div class="p-3 rounded-xl bg-brand-orange/10 border border-brand-orange/20 text-xs text-brand-orange flex items-start gap-2.5">
+            <i class="fa-solid fa-circle-info text-base mt-0.5"></i>
+            <div>
+              <p class="font-bold">مساحة بيانات التدريب المخصصة:</p>
+              <p class="text-gray-300 mt-0.5">انسخ والصق هنا أي ملفات، مواصفات منتجات، أسئلة شائعة (FAQs)، أو قوائم أسعار ترغب في تدريب الشات بوت عليها. سيتم دمجها فوراً في سياق النموذج عند كل ريكويست!</p>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-gray-300">محتوى بيانات التدريب والوثائق:</label>
+            <div class="flex items-center gap-2">
+              <label for="kbFileInput" class="cursor-pointer text-xs font-medium px-2.5 py-1 rounded bg-[#2b2b2b] hover:bg-[#353535] text-gray-300 border border-[#444] flex items-center gap-1.5 transition-all">
+                <i class="fa-solid fa-upload text-[11px] text-brand-orange"></i>
+                <span>رفع ملف (.txt / .md / .json)</span>
+              </label>
+              <input type="file" id="kbFileInput" accept=".txt,.md,.json" class="hidden" />
+              <button id="clearKbBtn" class="text-xs font-medium px-2.5 py-1 rounded bg-red-900/20 hover:bg-red-900/40 text-red-400 border border-red-800/40 transition-all">
+                تفريغ الحقل
+              </button>
+            </div>
+          </div>
+
+          <textarea
+            id="kbCustomDataInput"
+            rows="12"
+            class="w-full bg-[#141414] border border-[#333333] focus:border-brand-orange rounded-xl p-3.5 text-xs sm:text-sm text-gray-200 font-mono leading-relaxed focus:outline-none"
+            placeholder="مثال:&#10;- كاميرا AiCAM 4K Pro: دقة 8 ميجابكسل، رؤية ليلية 50 متر، بطارية تدوم 6 أشهر، السعر: 1500 ريال.&#10;- جهاز الإنذار الذكي: مزود بحساسات كشف الحركة بالأشعة تحت الحمراء، ربط فوري بالموبايل، صفارة 110 ديسيبل...&#10;&#10;الصق أي بيانات هنا في أي وقت!"
+          ></textarea>
+        </div>
+
+        <!-- Tab 2: Company Overview & Identity -->
+        <div id="tab-overview" class="tab-pane hidden space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-gray-300 mb-1.5">دور المساعد الذكي (System Role):</label>
+            <input
+              type="text"
+              id="kbRoleInput"
+              class="w-full bg-[#141414] border border-[#333333] focus:border-brand-orange rounded-xl px-3.5 py-2.5 text-sm text-gray-200 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-300 mb-1.5">أسلوب الرد (Tone of Voice):</label>
+            <input
+              type="text"
+              id="kbToneInput"
+              class="w-full bg-[#141414] border border-[#333333] focus:border-brand-orange rounded-xl px-3.5 py-2.5 text-sm text-gray-200 focus:outline-none"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-300 mb-1.5">نبذة عن شركة AiCAM:</label>
+            <textarea
+              id="kbOverviewInput"
+              rows="3"
+              class="w-full bg-[#141414] border border-[#333333] focus:border-brand-orange rounded-xl p-3.5 text-sm text-gray-200 focus:outline-none leading-relaxed"
+            ></textarea>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-gray-300 mb-1.5">الخدمات الأساسية (سطر لكل خدمة):</label>
+            <textarea
+              id="kbServicesInput"
+              rows="4"
+              class="w-full bg-[#141414] border border-[#333333] focus:border-brand-orange rounded-xl p-3.5 text-sm text-gray-200 font-mono focus:outline-none leading-relaxed"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Tab 3: Model & API Settings -->
+        <div id="tab-model" class="tab-pane hidden space-y-5">
+          <div>
+            <label class="block text-xs font-bold text-gray-300 mb-1.5">اختيار النموذج الذكي (Model):</label>
+            <select id="modelSelect" class="w-full bg-[#141414] border border-[#333333] focus:border-brand-orange rounded-xl px-3.5 py-2.5 text-sm text-gray-200 focus:outline-none font-mono">
+              <option value="qwen/qwen3.8-27b">Qwen 3.8 27B (سريع جداً وممتاز في اللغة العربية)</option>
+              <option value="openai/gpt-oss-120b">GPT OSS 120B (نموذج عملاق فائق الذكاء مع خطوات التفكير)</option>
+              <option value="allam-2-7b">ALLaM 2 7B (النموذج العربي الوطني)</option>
+              <option value="openai/gpt-oss-20b">GPT OSS 20B (خفيف وسريع)</option>
+            </select>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <div class="flex justify-between text-xs font-bold text-gray-300 mb-1.5">
+                <span>درجة الإبداع (Temperature):</span>
+                <span id="tempValue" class="font-mono text-brand-orange">0.6</span>
+              </div>
+              <input type="range" id="tempRange" min="0" max="1" step="0.1" value="0.6" class="w-full accent-brand-orange cursor-pointer" />
+              <div class="flex justify-between text-[10px] text-gray-500 mt-1">
+                <span>دقيق ومباشر (0.0)</span>
+                <span>إبداعي ومتنوع (1.0)</span>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs font-bold text-gray-300 mb-1.5">
+                <span>أقصى طول للإجابة (Max Tokens):</span>
+                <span id="tokensValue" class="font-mono text-brand-orange">2048</span>
+              </div>
+              <input type="range" id="tokensRange" min="256" max="4096" step="128" value="2048" class="w-full accent-brand-orange cursor-pointer" />
+              <div class="flex justify-between text-[10px] text-gray-500 mt-1">
+                <span>موجز (256)</span>
+                <span>تفصيلي طويل (4096)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-[#2e2e2e]">
+            <label class="block text-xs font-bold text-gray-300 mb-1.5">مفتاح Groq API الحالي:</label>
+            <div class="flex gap-2">
+              <input
+                type="text"
+                id="apiKeyInput"
+                class="flex-1 bg-[#141414] border border-[#333333] rounded-xl px-3.5 py-2.5 text-sm text-gray-200 font-mono focus:outline-none"
+                placeholder="gsk_..."
+              />
+              <button id="updateApiKeyBtn" class="px-4 py-2.5 rounded-xl bg-[#2a2a2a] hover:bg-[#353535] border border-[#444] text-xs font-bold text-white transition-all">
+                تحديث المفتاح
+              </button>
+            </div>
+            <p class="text-[11px] text-gray-500 mt-1">المفتاح الحالي مفعل ومربوط بالخادم تلقائياً.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="p-4 sm:p-5 border-t border-[#2e2e2e] bg-[#222222] flex items-center justify-between">
+        <span id="saveStatusMsg" class="text-xs font-semibold text-emerald-400 hidden">
+          <i class="fa-solid fa-check ml-1"></i> تم الحفظ بنجاح!
+        </span>
+        <div class="flex items-center gap-2 mr-auto">
+          <button id="cancelModalBtn" class="px-4 py-2 rounded-xl bg-[#2a2a2a] hover:bg-[#333333] text-gray-300 text-xs sm:text-sm font-semibold transition-all">
+            إغلاق
+          </button>
+          <button id="saveKnowledgeBtn" class="px-5 py-2 rounded-xl bg-brand-orange hover:bg-brand-orangeHover text-white text-xs sm:text-sm font-bold shadow-md shadow-brand-orange/20 transition-all flex items-center gap-1.5">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>حفظ وتطبيق البيانات</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL: BRAND INFO & LOGO SHOWCASE                       -->
+  <!-- ======================================================== -->
+  <div id="brandModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="bg-[#1c1c1c] border border-[#383838] rounded-2xl w-full max-w-2xl shadow-2xl p-6 flex flex-col space-y-4">
+      <div class="flex items-center justify-between border-b border-[#2e2e2e] pb-3">
+        <h3 class="text-base font-bold text-white flex items-center gap-2">
+          <img src="assets/icon.svg" class="w-6 h-6" alt="Icon" />
+          الهوية البصرية لـ AiCAM
+        </h3>
+        <button id="closeBrandModalBtn" class="w-8 h-8 rounded-lg bg-[#2c2c2c] hover:bg-[#383838] text-gray-400 hover:text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <div class="rounded-xl overflow-hidden border border-[#333] bg-black/40">
+        <img src="assets/aicam-brand.jpg" alt="AiCAM Brand Guide" class="w-full object-contain" />
+      </div>
+
+      <div class="grid grid-cols-3 gap-3 pt-2 text-center text-xs">
+        <div class="p-3 rounded-lg bg-[#252525] border border-[#333]">
+          <div class="w-6 h-6 rounded-full bg-[#ff773b] mx-auto mb-1.5 border border-white/20"></div>
+          <span class="font-bold text-white block">#ff773b</span>
+          <span class="text-gray-400 text-[10px]">Orange (Primary)</span>
+        </div>
+        <div class="p-3 rounded-lg bg-[#252525] border border-[#333]">
+          <div class="w-6 h-6 rounded-full bg-[#2f2f2f] mx-auto mb-1.5 border border-white/20"></div>
+          <span class="font-bold text-white block">#2f2f2f</span>
+          <span class="text-gray-400 text-[10px]">Charcoal</span>
+        </div>
+        <div class="p-3 rounded-lg bg-[#252525] border border-[#333]">
+          <div class="w-6 h-6 rounded-full bg-[#ffffff] mx-auto mb-1.5 border border-gray-300"></div>
+          <span class="font-bold text-white block">#ffffff</span>
+          <span class="text-gray-400 text-[10px]">White</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

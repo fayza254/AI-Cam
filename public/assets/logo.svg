@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 160" fill="none">
+  <!-- AiCAM Chevron Icon -->
+  <g transform="translate(10, 10)">
+    <!-- Outer Chevron / A-frame -->
+    <path d="M 70 10 L 130 130 L 98 130 L 70 70 L 42 130 L 10 130 Z" fill="#ff773b" />
+    <!-- Floating Diamond / Square -->
+    <polygon points="70,95 86,113 70,131 54,113" fill="#ff773b" />
+  </g>
+
+  <!-- AiCAM Wordmark -->
+  <!-- 'A' -->
+  <path d="M 180 105 L 205 38 L 222 38 L 247 105 L 230 105 L 224 88 L 203 88 L 197 105 Z M 207 72 L 220 72 L 213.5 54 Z" fill="currentColor" />
+  
+  <!-- 'i' with orange square dot -->
+  <rect x="257" y="38" width="16" height="16" fill="#ff773b" rx="2" />
+  <rect x="257" y="60" width="16" height="45" fill="currentColor" rx="2" />
+
+  <!-- 'C' -->
+  <path d="M 335 52 C 328 42 316 36 302 36 C 282 36 267 51 267 72 C 267 93 282 108 302 108 C 316 108 328 102 335 92 L 322 81 C 318 87 311 91 302 91 C 291 91 283 83 283 72 C 283 61 291 53 302 53 C 311 53 318 57 322 63 Z" fill="currentColor" transform="translate(42, 0)" />
+
+  <!-- 'A' (second A) -->
+  <path d="M 390 105 L 415 38 L 432 38 L 457 105 L 440 105 L 434 88 L 413 88 L 407 105 Z M 417 72 L 430 72 L 423.5 54 Z" fill="currentColor" />
+
+  <!-- 'M' -->
+  <path d="M 467 105 L 467 38 L 485 38 L 499 76 L 513 38 L 531 38 L 531 105 L 515 105 L 515 62 L 504 92 L 494 92 L 483 62 L 483 105 Z" fill="currentColor" transform="translate(10, 0)" />
+
+  <!-- Subtitle -->
+  <text x="180" y="132" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif" font-size="16" font-weight="600" letter-spacing="3" fill="#888888">
+    Smart Intelligent Security
+  </text>
+</svg>

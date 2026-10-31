@@ -1,0 +1,271 @@
+/* ======================================================== */
+/* AiCAM Smart Security Assistant - Global Styles           */
+/* Brand Colors: Orange #ff773b, Charcoal #2f2f2f, White   */
+/* ======================================================== */
+
+:root {
+  --brand-orange: #ff773b;
+  --brand-orange-hover: #e66226;
+  --brand-charcoal: #2f2f2f;
+  --bg-dark: #141414;
+  --card-dark: #1e1e1e;
+  --border-dark: #333333;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--brand-orange);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-appear {
+  animation: fadeInUp 0.25s ease-out forwards;
+}
+
+/* Markdown Typography within Chat Bubbles */
+.prose-aicam {
+  font-size: 0.935rem;
+  line-height: 1.75;
+  color: #e5e7eb;
+}
+
+.prose-aicam h1, 
+.prose-aicam h2, 
+.prose-aicam h3, 
+.prose-aicam h4 {
+  color: #ffffff;
+  font-weight: 700;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-aicam h1 { font-size: 1.35rem; border-bottom: 1px solid #383838; padding-bottom: 0.3rem; }
+.prose-aicam h2 { font-size: 1.2rem; }
+.prose-aicam h3 { font-size: 1.05rem; }
+
+.prose-aicam p {
+  margin-bottom: 0.75rem;
+}
+
+.prose-aicam p:last-child {
+  margin-bottom: 0;
+}
+
+.prose-aicam ul, 
+.prose-aicam ol {
+  margin-top: 0.4rem;
+  margin-bottom: 0.8rem;
+  padding-right: 1.4rem;
+}
+
+html[dir="ltr"] .prose-aicam ul,
+html[dir="ltr"] .prose-aicam ol {
+  padding-right: 0;
+  padding-left: 1.4rem;
+}
+
+.prose-aicam ul {
+  list-style-type: disc;
+}
+
+.prose-aicam ol {
+  list-style-type: decimal;
+}
+
+.prose-aicam li {
+  margin-bottom: 0.35rem;
+}
+
+.prose-aicam strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.prose-aicam code:not(pre code) {
+  background-color: rgba(255, 119, 59, 0.12);
+  color: #ffaa80;
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.35rem;
+  font-size: 0.85em;
+  font-family: monospace;
+  border: 1px solid rgba(255, 119, 59, 0.25);
+}
+
+.prose-aicam pre {
+  margin: 0.85rem 0;
+  border-radius: 0.75rem;
+  background-color: #121212 !important;
+  border: 1px solid #333333;
+  overflow-x: auto;
+  position: relative;
+}
+
+.prose-aicam pre code {
+  padding: 1rem;
+  display: block;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  font-family: Consolas, 'Courier New', monospace;
+}
+
+.prose-aicam blockquote {
+  border-right: 3px solid var(--brand-orange);
+  padding-right: 1rem;
+  margin: 0.8rem 0;
+  color: #a3a3a3;
+  font-style: italic;
+}
+
+html[dir="ltr"] .prose-aicam blockquote {
+  border-right: none;
+  border-left: 3px solid var(--brand-orange);
+  padding-right: 0;
+  padding-left: 1rem;
+}
+
+.prose-aicam table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.85rem 0;
+  font-size: 0.85rem;
+}
+
+.prose-aicam th, 
+.prose-aicam td {
+  border: 1px solid #383838;
+  padding: 0.6rem 0.85rem;
+  text-align: right;
+}
+
+html[dir="ltr"] .prose-aicam th,
+html[dir="ltr"] .prose-aicam td {
+  text-align: left;
+}
+
+.prose-aicam th {
+  background-color: #262626;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.prose-aicam tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Typing cursor animation */
+.typing-cursor::after {
+  content: '▋';
+  display: inline-block;
+  margin-right: 2px;
+  color: var(--brand-orange);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Light Mode Overrides */
+html:not(.dark) body {
+  background-color: #f7f8fa;
+  color: #2f2f2f;
+}
+
+html:not(.dark) header {
+  background-color: rgba(255, 255, 255, 0.95);
+  border-color: #e5e7eb;
+}
+
+html:not(.dark) header span.text-white {
+  color: #1f2937 !important;
+}
+
+html:not(.dark) #welcomeView h1 {
+  color: #1f2937 !important;
+}
+
+html:not(.dark) .suggestion-card {
+  background-color: #ffffff;
+  border-color: #e5e7eb;
+}
+
+html:not(.dark) .suggestion-card p {
+  color: #374151 !important;
+}
+
+html:not(.dark) .suggestion-card:hover {
+  background-color: #faf5f2;
+}
+
+html:not(.dark) #chatInput {
+  color: #1f2937;
+}
+
+html:not(.dark) .bg-\[\#1e1e1e\] {
+  background-color: #ffffff;
+}
+
+html:not(.dark) .border-\[\#333333\],
+html:not(.dark) .border-\[\#383838\],
+html:not(.dark) .border-\[\#2e2e2e\] {
+  border-color: #e5e7eb;
+}
+
+html:not(.dark) .prose-aicam {
+  color: #374151;
+}
+
+html:not(.dark) .prose-aicam h1, 
+html:not(.dark) .prose-aicam h2, 
+html:not(.dark) .prose-aicam h3, 
+html:not(.dark) .prose-aicam strong {
+  color: #111827;
+}
+
+html:not(.dark) .ai-bubble {
+  background-color: #ffffff !important;
+  border-color: #e5e7eb !important;
+}
+
+html:not(.dark) #knowledgeModal .bg-\[\#1c1c1c\],
+html:not(.dark) #knowledgeModal .bg-\[\#222222\],
+html:not(.dark) #brandModal .bg-\[\#1c1c1c\] {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) #knowledgeModal .bg-\[\#141414\] {
+  background-color: #f9fafb !important;
+  color: #111827 !important;
+}
+
+html:not(.dark) #knowledgeModal h2,
+html:not(.dark) #brandModal h3,
+html:not(.dark) #knowledgeModal label {
+  color: #111827 !important;
+}
